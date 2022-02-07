@@ -131,6 +131,9 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
+    auto g = apvts.getRawParameterValue("GAIN");
+    std::cout << g->load() << std::endl;
+
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -162,8 +165,8 @@ bool AudioPluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor()
 {
-    //return new AudioPluginAudioProcessorEditor (*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+    return new AudioPluginAudioProcessorEditor (*this);
+    //return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -190,6 +193,7 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameters() {
+
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN",
                                                                      "Gain",
