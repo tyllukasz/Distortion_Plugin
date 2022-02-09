@@ -70,7 +70,8 @@ juce_generate_juce_header(DistortionPluginNew)
 target_sources(DistortionPluginNew
     PRIVATE
         PluginEditor.cpp
-        PluginProcessor.cpp)
+        PluginProcessor.cpp
+        sliderLookAndFeel.cpp)
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use

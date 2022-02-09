@@ -8,10 +8,12 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     juce::ignoreUnused (processorRef);
 
     // === SLIDERS ===
-    gainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
-    gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 50);
-    addAndMakeVisible(gainSlider);
-    gainSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.apvts, "GAIN", gainSlider);
+    addAndMakeVisible(gainKnobSlider);
+    gainKnobSlider.setLookAndFeel(&myKnobLookAndFeel);
+    gainKnobSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    gainKnobSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+
+    gainKnobSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.apvts, "GAIN", gainKnobSlider);
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -26,16 +28,25 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll(juce::Colours::grey);
 
-//    g.setColour (juce::Colours::white);
-//    g.setFont (15.0f);
-//    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    g.setColour (juce::Colours::orange);
+    auto r = getBounds().toFloat();
+    r.removeFromRight(40.f);
+    r.removeFromLeft(40.f);
+    r.removeFromBottom(65.f);
+    g.drawRoundedRectangle(r, 20, 5);
+
 }
 
 void AudioPluginAudioProcessorEditor::resized()
 {
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor...
-    gainSlider.setBounds(50, 50, getWidth() - 100, getHeight() - 100);
+
+    // ============================================================
+    gainKnobSlider.setBoundsRelative(0.1, 0.54, 0.3, 0.3);
 }
+
+
+
