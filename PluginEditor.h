@@ -2,6 +2,7 @@
 
 #include "PluginProcessor.h"
 #include "sliderLookAndFeel.h"
+#include "guiComponents.h"
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
@@ -20,11 +21,23 @@ private:
     AudioPluginAudioProcessor& processorRef;
 
     // =========================================================
-    knobLookAndFeel myKnobLookAndFeel;
-    juce::Slider gainKnobSlider;
+//    knobLookAndFeel myKnobLookAndFeel;
+//    juce::Slider gainKnobSlider;
+
+    // =========================================================
+    // Layout definition
+    transferFunctionDisplay tfd;
+    knobsControlPanel kcp;
+    buttonsControlPanel bcp;
     // =========================================================
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainKnobSliderAttachment;
+//    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainKnobSliderAttachment;
+
+    // =========================================================
+    // Layout parameters
+
+    int marginInPixels = 10;
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

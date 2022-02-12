@@ -1,14 +1,9 @@
-//
-// Created by User on 09/02/2022.
-//
-
 #include "sliderLookAndFeel.h"
 
 //==============================================================================
 knobLookAndFeel::knobLookAndFeel()
 {
-    File knobImageFile = File::getSpecialLocation
-            (File::SpecialLocationType::userDesktopDirectory).getChildFile("knob2.png");
+    File knobImageFile("D:/Programowanie/Images/audio_knobs/knob2.png");
 //    File knobImageFile = File::getSpecialLocation
 //            (File::SpecialLocationType::userDesktopDirectory).getChildFile("knob2.png");
     image = ImageCache::getFromFile(knobImageFile);
