@@ -4,14 +4,27 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 #include "sliderLookAndFeel.h"
+#include "TransferFunctions.h"
 
-class transferFunctionDisplay : public juce::Component {
+class transferFunctionDisplay : public juce::Component,
+                                public juce::Timer,
+                                public juce::AudioProcessorParameter::Listener {
 public:
-//    transferFunctionDisplay();
-//    ~transferFunctionDisplay();
+    transferFunctionDisplay(AudioPluginAudioProcessor& p);
+    ~transferFunctionDisplay();
 
     void paint(juce::Graphics& g) override;
-//    void resized() override;
+    void parameterValueChanged(int parameterIndex, float newValue) override;
+    void parameterGestureChanged (int parameterIndex, bool gestureIsStarting) override {}
+    void timerCallback() override;
+
+    juce::Rectangle<float> getRenderArea();
+
+private:
+    AudioPluginAudioProcessor& processorRef;
+    juce::Path transferFunctionCurve;
+    juce::Atomic<bool> parametersChanged {false};
+
 };
 
 class knobsControlPanel : public Component {
