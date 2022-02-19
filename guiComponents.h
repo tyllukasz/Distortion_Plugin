@@ -22,7 +22,6 @@ public:
 
 private:
     AudioPluginAudioProcessor& processorRef;
-    juce::Path transferFunctionCurve;
     juce::Atomic<bool> parametersChanged {false};
 
 };
