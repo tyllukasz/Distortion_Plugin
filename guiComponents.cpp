@@ -38,15 +38,15 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
 
     //==================================================================================================================
     //==================================================================================================================
-    int curveResolution {128};
+    int curveResolution {256};
     float maxInputAmplitudeValue {1.5f};
     float maxOutputAmplitudeValue {1.0f};
 
-    std::vector<float> xRealValues(curveResolution); // x values normalized from 0 to maxInputAmplitude
+    std::vector<float> xRealValues(curveResolution); // x values normalized from -maxInputAmplitude to maxInputAmplitude
     for(int i = 0; i < curveResolution; i++) {
         xRealValues.at(i) = juce::jmap(static_cast<float>(i),
                                        0.f, static_cast<float>(curveResolution - 1),
-                                       0.f, maxInputAmplitudeValue);
+                                       -maxInputAmplitudeValue, maxInputAmplitudeValue);
     }
 
     std::vector<float> yRealValues(xRealValues.size()); // y values normalized from 0 to maxOutputAmplitude
@@ -59,21 +59,23 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
     std::vector<float> xCoordinate(curveResolution);
     std::vector<float> yCoordinate(curveResolution);
 
-    xCoordinate.at(0) = getLocalBounds().toFloat().getCentreX();
-    yCoordinate.at(0) = getLocalBounds().toFloat().getCentreY();
+    xCoordinate.at(0) = 0.f;
+    yCoordinate.at(0) = juce::jmap(yRealValues.at(0),
+                                   -maxOutputAmplitudeValue, maxOutputAmplitudeValue,
+                                   getLocalBounds().toFloat().getHeight(), 0.f);
     transferFunctionCurve.startNewSubPath(xCoordinate.at(0), yCoordinate.at(0));
 
     for(int i = 1; i < curveResolution; i++) {
 
         xCoordinate.at(i) = juce::jmap(xRealValues.at(i),
-                                 0.f, maxInputAmplitudeValue,
-                                 getLocalBounds().toFloat().getCentreX(),
+                                 -maxInputAmplitudeValue, maxInputAmplitudeValue,
+                                 0.f,
                                  getLocalBounds().toFloat().getWidth());
 
 
         yCoordinate.at(i) = juce::jmap(yRealValues.at(i),
-                                       0.f, maxOutputAmplitudeValue,
-                                       getLocalBounds().toFloat().getCentreY(), 0.f);
+                                       -maxOutputAmplitudeValue, maxOutputAmplitudeValue,
+                                       getLocalBounds().toFloat().getHeight(), 0.f);
     }
 
     for(int i = 1; i < curveResolution; i++) {
