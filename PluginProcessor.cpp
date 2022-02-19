@@ -11,7 +11,8 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-       apvts(*this, nullptr, "Parameters", createParameters())
+       apvts(*this, nullptr, "Parameters", createParameters()),
+       bufferForGuiInterface(getTotalNumInputChannels(), getSampleRate())
 {
 }
 
@@ -152,6 +153,8 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
+        bufferForGuiInterface = buffer;
+
         juce::ignoreUnused (channelData);
         // ..do something to the data...
     }
@@ -197,8 +200,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN",
                                                                      "Gain",
-                                                                     0.0f,
                                                                      1.0f,
-                                                                     0.5f));
+                                                                     5.0f,
+                                                                     1.f));
     return {parameters.begin(), parameters.end()};
 }

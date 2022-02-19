@@ -1,7 +1,9 @@
 #include "TransferFunctions.h"
 
-#include <cmath>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-float arcTangens (float x, float a, float b) {
-    return a * atan(b * x);
+
+float arcTangens (double x, float slope) {
+    return 2 / M_PI * atan(slope * x);
 }

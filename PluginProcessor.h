@@ -43,6 +43,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     juce::AudioProcessorValueTreeState apvts;
+    juce::AudioBuffer<float> bufferForGuiInterface;
 
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();

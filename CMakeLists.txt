@@ -49,7 +49,7 @@ juce_add_plugin(DistortionPluginNew
     # EDITOR_WANTS_KEYBOARD_FOCUS TRUE/FALSE    # Does the editor need keyboard focus?
     # COPY_PLUGIN_AFTER_BUILD TRUE/FALSE        # Should the plugin be installed to a default location after building?
     PLUGIN_MANUFACTURER_CODE Luka               # A four-character manufacturer id with at least one upper-case character
-    PLUGIN_CODE Dis3                            # A unique four-character plugin id with exactly one upper-case character
+    PLUGIN_CODE Dis9                            # A unique four-character plugin id with exactly one upper-case character
                                                 # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
     FORMATS VST3 Standalone                     # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
     PRODUCT_NAME "Distortion Plugin New")       # The name of the final executable, which can differ from the target name

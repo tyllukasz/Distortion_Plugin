@@ -27,44 +27,43 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
     g.setColour(juce::Colours::black);
     g.fillRoundedRectangle(getRenderArea(),5);
     g.setColour(juce::Colours::red);
-    g.drawVerticalLine(getRenderArea().getCentreX(), ((getHeight() - getRenderArea().getHeight()) / 2),
-                       getHeight() - ((getHeight() - getRenderArea().getHeight()) / 2));
+    g.drawVerticalLine(getRenderArea().getCentreX(), 0.f,
+                       getHeight());
 
-    g.drawHorizontalLine(getRenderArea().getCentreY(), ((getWidth() - getRenderArea().getWidth()) / 2),
-                         getWidth() - ((getWidth() - getRenderArea().getWidth()) / 2));
+    g.drawHorizontalLine(getRenderArea().getCentreY(), 0.f,
+                         getWidth());
 
     auto gain = processorRef.apvts.getRawParameterValue("GAIN");
     auto gain_value = gain->load();
 
     //==================================================================================================================
     //==================================================================================================================
-    int verticalCurveResolution {1024};
-    int horizontalCurveResolution {16};
-    float maxInputAmplitudeValue {3.f};
-    float maxOutputAmplitudeValue {2.f};
+    int curveResolution {128};
+    float maxInputAmplitudeValue {1.5f};
+    float maxOutputAmplitudeValue {1.0f};
 
-    std::vector<float> xRealValues(horizontalCurveResolution); // x values normalized from 0 to maxInputAmplitude
-    for(int i = 0; i < horizontalCurveResolution; i++) {
+    std::vector<float> xRealValues(curveResolution); // x values normalized from 0 to maxInputAmplitude
+    for(int i = 0; i < curveResolution; i++) {
         xRealValues.at(i) = juce::jmap(static_cast<float>(i),
-                                       0.f, static_cast<float>(horizontalCurveResolution - 1),
+                                       0.f, static_cast<float>(curveResolution - 1),
                                        0.f, maxInputAmplitudeValue);
     }
 
     std::vector<float> yRealValues(xRealValues.size()); // y values normalized from 0 to maxOutputAmplitude
     for(int i = 0; i < yRealValues.size(); i++) {
-        yRealValues.at(i) = arcTangens(xRealValues.at(i), gain_value, 1.f);
+        yRealValues.at(i) = arcTangens(xRealValues.at(i), gain_value);
     }
     //==================================================================================================================
     //==================================================================================================================
 
-    std::vector<float> xCoordinate(horizontalCurveResolution);
-    std::vector<float> yCoordinate(horizontalCurveResolution);
+    std::vector<float> xCoordinate(curveResolution);
+    std::vector<float> yCoordinate(curveResolution);
 
     xCoordinate.at(0) = getLocalBounds().toFloat().getCentreX();
     yCoordinate.at(0) = getLocalBounds().toFloat().getCentreY();
     transferFunctionCurve.startNewSubPath(xCoordinate.at(0), yCoordinate.at(0));
 
-    for(int i = 1; i < horizontalCurveResolution; i++) {
+    for(int i = 1; i < curveResolution; i++) {
 
         xCoordinate.at(i) = juce::jmap(xRealValues.at(i),
                                  0.f, maxInputAmplitudeValue,
@@ -77,18 +76,33 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
                                        getLocalBounds().toFloat().getCentreY(), 0.f);
     }
 
-    for(int i = 1; i < horizontalCurveResolution; i++) {
+    for(int i = 1; i < curveResolution; i++) {
         transferFunctionCurve.lineTo(xCoordinate.at(i), yCoordinate.at(i));
     }
 
-//    transferFunctionCurve.startNewSubPath(getRenderArea().getCentreX(), getRenderArea().getCentreY());
-//    transferFunctionCurve.lineTo(getRenderArea().getCentreX()+50, gain_value * (getRenderArea().getCentreY()-50));
-//    transferFunctionCurve.lineTo(getRenderArea().getCentreX()+100, gain_value * (getRenderArea().getCentreY()-50));
-    //transferFunctionCurve.closeSubPath();
-
-    g.setColour(juce::Colours::blueviolet);
+    g.setColour(juce::Colour::fromRGBA(147,211,241,255));
     g.strokePath(transferFunctionCurve, juce::PathStrokeType(3.f));
 
+    //==================================================================================================================
+    //==================================================================================================================
+    juce::Rectangle<float> currentSample;
+    currentSample.setSize(10.f, 10.f);
+
+    auto sample = processorRef.bufferForGuiInterface.getReadPointer(0);
+
+    auto actualXofCircle = juce::jmap(sample[0],
+                                   0.f, maxInputAmplitudeValue,
+                                   getLocalBounds().toFloat().getCentreX(),
+                                   getLocalBounds().toFloat().getWidth());
+
+
+   auto actualYofCircle = juce::jmap(arcTangens(sample[0], gain_value),
+                                   0.f, maxOutputAmplitudeValue,
+                                   getLocalBounds().toFloat().getCentreY(), 0.f);
+
+    currentSample.setCentre(actualXofCircle, actualYofCircle);
+    g.setColour(juce::Colours::orange);
+    g.fillEllipse(currentSample);
 
 }
 
@@ -97,9 +111,10 @@ void transferFunctionDisplay::parameterValueChanged(int parameterIndex, float ne
 }
 
 void transferFunctionDisplay::timerCallback() {
-    if(parametersChanged.compareAndSetBool(false, true)) {
-        repaint();
-    }
+//    if(parametersChanged.compareAndSetBool(false, true)) {
+//        repaint();
+//    }
+    repaint();
 }
 
 //void transferFunctionDisplay::resized() {

@@ -1,6 +1,6 @@
 #ifndef DISTORTION_PLUGIN_NEW_TRANSFERFUNCTIONS_H
 #define DISTORTION_PLUGIN_NEW_TRANSFERFUNCTIONS_H
 
-float arcTangens (float x, float a, float b);
+float arcTangens (double x, float slope);
 
 #endif //DISTORTION_PLUGIN_NEW_TRANSFERFUNCTIONS_H
