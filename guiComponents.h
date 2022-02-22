@@ -39,9 +39,19 @@ private:
 
 //    knobLookAndFeel myKnobLookAndFeel;
     myLookAndFeelV2 myKnobLookAndFeel;
-    juce::Slider gainKnobSlider;
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainKnobSliderAttachment;
+    juce::Slider gainInKnobSlider;
+    juce::Label gainInLabel;
+
+    juce::Slider shapeKnobSlider;
+    juce::Label shapeLabel;
+
+    juce::Slider gainOutKnobSlider;
+    juce::Label gainOutLabel;
+
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainInKnobSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> shapeKnobSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainOutKnobSliderAttachment;
 };
 
 class buttonsControlPanel : public juce::Component {

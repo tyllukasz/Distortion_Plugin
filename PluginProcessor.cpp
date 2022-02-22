@@ -132,7 +132,7 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    auto g = apvts.getRawParameterValue("GAIN");
+    auto g = apvts.getRawParameterValue("SHAPE");
     std::cout << g->load() << std::endl;
 
     // In case we have more outputs than inputs, this code clears any output
@@ -198,10 +198,24 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameters() {
 
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN",
-                                                                     "Gain",
+
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN_IN",
+                                                                     "Input gain",
                                                                      1.0f,
                                                                      5.0f,
                                                                      1.f));
+
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("SHAPE",
+                                                                     "Shape",
+                                                                     1.0f,
+                                                                     5.0f,
+                                                                     1.f));
+
+    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN_OUT",
+                                                                     "Output gain",
+                                                                     1.0f,
+                                                                     5.0f,
+                                                                     1.f));
+
     return {parameters.begin(), parameters.end()};
 }

@@ -33,7 +33,7 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
     g.drawHorizontalLine(getRenderArea().getCentreY(), 0.f,
                          getWidth());
 
-    auto gain = processorRef.apvts.getRawParameterValue("GAIN");
+    auto gain = processorRef.apvts.getRawParameterValue("SHAPE");
     auto gain_value = gain->load();
 
     //==================================================================================================================
@@ -134,12 +134,54 @@ juce::Rectangle<float> transferFunctionDisplay::getRenderArea() {
 
 knobsControlPanel::knobsControlPanel(AudioPluginAudioProcessor& p) : processorRef(p) {
 
-    addAndMakeVisible(gainKnobSlider);
-    gainKnobSlider.setLookAndFeel(&myKnobLookAndFeel);
-    gainKnobSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
-    gainKnobSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+    //============================================================================================================
+    addAndMakeVisible(gainInKnobSlider);
+    gainInKnobSlider.setLookAndFeel(&myKnobLookAndFeel);
+    gainInKnobSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    gainInKnobSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+    gainInKnobSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
+    gainInKnobSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colour::fromRGBA(143,143,143,255));
 
-    gainKnobSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.apvts, "GAIN", gainKnobSlider);
+    gainInKnobSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.apvts, "GAIN_IN", gainInKnobSlider);
+
+    gainInLabel.setText("Input gain", juce::dontSendNotification);
+    gainInLabel.setJustificationType(juce::Justification::centred);
+    gainInLabel.attachToComponent(&gainInKnobSlider, false);
+    gainInLabel.setSize(60, 20);
+    gainInLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(gainInLabel);
+
+    //============================================================================================================
+    addAndMakeVisible(shapeKnobSlider);
+    shapeKnobSlider.setLookAndFeel(&myKnobLookAndFeel);
+    shapeKnobSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    shapeKnobSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+    shapeKnobSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
+    shapeKnobSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colour::fromRGBA(143,143,143,255));
+
+    shapeKnobSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.apvts, "SHAPE", shapeKnobSlider);
+
+    shapeLabel.setText("Shape", juce::dontSendNotification);
+    shapeLabel.setJustificationType(juce::Justification::centred);
+    shapeLabel.attachToComponent(&shapeKnobSlider, false);
+    shapeLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(shapeLabel);
+
+    //============================================================================================================
+    addAndMakeVisible(gainOutKnobSlider);
+    gainOutKnobSlider.setLookAndFeel(&myKnobLookAndFeel);
+    gainOutKnobSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    gainOutKnobSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+    gainOutKnobSlider.setColour(juce::Slider::textBoxTextColourId, juce::Colours::black);
+    gainOutKnobSlider.setColour(juce::Slider::textBoxOutlineColourId, juce::Colour::fromRGBA(143,143,143,255));
+
+    gainOutKnobSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.apvts, "GAIN_OUT", gainOutKnobSlider);
+
+    gainOutLabel.setText("Output gain", juce::dontSendNotification);
+    gainOutLabel.setJustificationType(juce::Justification::centred);
+    gainOutLabel.attachToComponent(&gainOutKnobSlider, false);
+    gainOutLabel.setColour(juce::Label::textColourId, juce::Colours::black);
+    addAndMakeVisible(gainOutLabel);
 }
 
 void knobsControlPanel::paint(juce::Graphics& g) {
@@ -152,8 +194,9 @@ void knobsControlPanel::paint(juce::Graphics& g) {
 
 void knobsControlPanel::resized() {
 
-//    gainKnobSlider.setBounds(0, 0, getHeight(), getHeight());
-    gainKnobSlider.setBoundsRelative(0.1f, 0.1f, 0.2, 0.8f);
+    gainInKnobSlider.setBounds(0, 25, getWidth()/3, getHeight()-30);
+    shapeKnobSlider.setBounds(getWidth()/3, 25, getWidth()/3, getHeight()-30);
+    gainOutKnobSlider.setBounds(2*getWidth()/3, 25, getWidth()/3, getHeight()-30);
 
 }
 

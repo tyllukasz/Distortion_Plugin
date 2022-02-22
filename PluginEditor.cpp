@@ -14,12 +14,12 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 
     //==============================================================================
     // === SLIDERS ===
-//    addAndMakeVisible(gainKnobSlider);
-//    gainKnobSlider.setLookAndFeel(&myKnobLookAndFeel);
-//    gainKnobSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
-//    gainKnobSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
+//    addAndMakeVisible(gainInKnobSlider);
+//    gainInKnobSlider.setLookAndFeel(&myKnobLookAndFeel);
+//    gainInKnobSlider.setSliderStyle(juce::Slider::RotaryVerticalDrag);
+//    gainInKnobSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 60, 20);
 //
-//    gainKnobSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.apvts, "GAIN", gainKnobSlider);
+//    gainInKnobSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(processorRef.apvts, "GAIN", gainInKnobSlider);
 
 
 
@@ -49,7 +49,7 @@ void AudioPluginAudioProcessorEditor::resized()
     bcp.setBounds(marginInPixels, 265 + 3 * marginInPixels, getWidth() - 2*marginInPixels, 115);
 
     // ============================================================
-    //gainKnobSlider.setBoundsRelative(0.1, 0.54, 0.3, 0.3);
+    //gainInKnobSlider.setBoundsRelative(0.1, 0.54, 0.3, 0.3);
 }
 
 

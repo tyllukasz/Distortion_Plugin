@@ -22,7 +22,7 @@ private:
 
     // =========================================================
 //    knobLookAndFeel myKnobLookAndFeel;
-//    juce::Slider gainKnobSlider;
+//    juce::Slider gainInKnobSlider;
 
     // =========================================================
     // Layout definition
@@ -31,7 +31,7 @@ private:
     buttonsControlPanel bcp;
     // =========================================================
 
-//    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainKnobSliderAttachment;
+//    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainInKnobSliderAttachment;
 
     // =========================================================
     // Layout parameters
