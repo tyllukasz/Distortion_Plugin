@@ -36,7 +36,7 @@ private:
     // =========================================================
     // Layout parameters
 
-    int marginInPixels = 10;
+    int marginInPixels = 5;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)

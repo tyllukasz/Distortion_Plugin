@@ -36,8 +36,7 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(juce::Colours::black);
-
+    g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
 }
 
 void AudioPluginAudioProcessorEditor::resized()
@@ -46,8 +45,8 @@ void AudioPluginAudioProcessorEditor::resized()
     // subcomponents in your editor...
 
     tfd.setBounds(marginInPixels,marginInPixels,getWidth() - 2*marginInPixels,150);
-    kcp.setBounds(marginInPixels, 150 + 2 * marginInPixels, getWidth() - 2*marginInPixels, 105);
-    bcp.setBounds(marginInPixels, 255 + 3 * marginInPixels, getWidth() - 2*marginInPixels, 105);
+    kcp.setBounds(marginInPixels, 150 + 2 * marginInPixels, getWidth() - 2*marginInPixels, 115);
+    bcp.setBounds(marginInPixels, 265 + 3 * marginInPixels, getWidth() - 2*marginInPixels, 115);
 
     // ============================================================
     //gainKnobSlider.setBoundsRelative(0.1, 0.54, 0.3, 0.3);

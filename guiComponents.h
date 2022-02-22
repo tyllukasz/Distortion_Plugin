@@ -6,6 +6,7 @@
 #include "sliderLookAndFeel.h"
 #include "TransferFunctions.h"
 
+
 class transferFunctionDisplay : public juce::Component,
                                 public juce::Timer,
                                 public juce::AudioProcessorParameter::Listener {
@@ -36,7 +37,8 @@ public:
 private:
     AudioPluginAudioProcessor& processorRef;
 
-    knobLookAndFeel myKnobLookAndFeel;
+//    knobLookAndFeel myKnobLookAndFeel;
+    myLookAndFeelV2 myKnobLookAndFeel;
     juce::Slider gainKnobSlider;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainKnobSliderAttachment;

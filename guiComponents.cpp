@@ -22,10 +22,10 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
 
     juce::Path transferFunctionCurve;
 
-    g.fillAll(juce::Colours::grey);
+    g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
 
     g.setColour(juce::Colours::black);
-    g.fillRoundedRectangle(getRenderArea(),5);
+    g.fillRoundedRectangle(getRenderArea(),7);
     g.setColour(juce::Colours::red);
     g.drawVerticalLine(getRenderArea().getCentreX(), 0.f,
                        getHeight());
@@ -125,10 +125,10 @@ void transferFunctionDisplay::timerCallback() {
 
 juce::Rectangle<float> transferFunctionDisplay::getRenderArea() {
     auto renderArea = getLocalBounds().toFloat();
-    renderArea.removeFromTop(5);
-    renderArea.removeFromBottom(5);
-    renderArea.removeFromLeft(5);
-    renderArea.removeFromRight(5);
+    renderArea.removeFromTop(1.5f);
+    renderArea.removeFromBottom(1.5f);
+    renderArea.removeFromLeft(1.5f);
+    renderArea.removeFromRight(1.5f);
     return renderArea;
 }
 
@@ -143,10 +143,10 @@ knobsControlPanel::knobsControlPanel(AudioPluginAudioProcessor& p) : processorRe
 }
 
 void knobsControlPanel::paint(juce::Graphics& g) {
-    g.fillAll(juce::Colours::grey);
+    g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
 
-    g.setColour(juce::Colours::orange);
-    g.drawRoundedRectangle(5.f, 5.f, getWidth()-10.f, getHeight()-10.f, 20, 5);
+    g.setColour(juce::Colour::fromRGBA(93,93,93,255));
+    g.drawRoundedRectangle(1.5f, 1.5f, getWidth()-3.f, getHeight()-3.f, 7.f, 1.f);
 
 };
 
@@ -158,9 +158,10 @@ void knobsControlPanel::resized() {
 }
 
 void buttonsControlPanel::paint(juce::Graphics& g) {
-    g.fillAll(juce::Colours::grey);
 
-    g.setColour(juce::Colours::orange);
-    g.drawRoundedRectangle(5.f, 5.f, getWidth()-10.f, getHeight()-10.f, 20, 5);
+    g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
+
+    g.setColour(juce::Colour::fromRGBA(93,93,93,255));
+    g.drawRoundedRectangle(1.5f, 1.5f, getWidth()-3.f, getHeight()-3.f, 7.f, 1.f);
 
 };

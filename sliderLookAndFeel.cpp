@@ -51,3 +51,54 @@ void knobLookAndFeel::drawRotarySlider(Graphics& g,
                          Justification::horizontallyCentred | Justification::centred, 1);
     }
 }
+
+
+//==============================================================================
+myLookAndFeelV2::myLookAndFeelV2()
+{
+}
+
+//==============================================================================
+void myLookAndFeelV2::drawRotarySlider(Graphics& g,
+                                       int x, int y, int width, int height, float sliderPos,
+                                       float rotaryStartAngle, float rotaryEndAngle, Slider& slider)
+{
+    const float radius = jmin(width / 2, height / 2) *0.85f;
+    const float centreX = x + width * 0.5f;
+    const float centreY = y + height * 0.5f;
+    const float rx = centreX - radius;
+    const float ry = centreY - radius;
+    const float rw = radius * 2.0f;
+    float fwidth = (float)width;
+    float fheight = (float)height;
+    const float angle = rotaryStartAngle
+                        + sliderPos
+                          * (rotaryEndAngle - rotaryStartAngle);
+
+    g.setColour(juce::Colour::fromRGBA(26,26,26,255));
+    Path filledArc;
+    filledArc.addPieSegment(rx, ry, rw + 1, rw + 1, rotaryStartAngle, rotaryEndAngle, 0.6);
+
+    g.fillPath(filledArc);
+
+    g.setColour(juce::Colour::fromRGBA(89,217,239,255)); //filled value
+    Path filledArc1;
+    filledArc1.addPieSegment(rx, ry, rw + 1, rw + 1, rotaryStartAngle, angle, 0.6);
+
+    g.fillPath(filledArc1);
+
+    Path p;
+    const float pointerLength = radius * 0.63f;
+    const float pointerThickness = radius * 0.2f;
+    p.addRectangle(-pointerThickness * 0.5f, -radius - 1, pointerThickness, pointerLength);
+    p.applyTransform(AffineTransform::rotation(angle).translated(centreX, centreY));
+    g.setColour(juce::Colour::fromRGBA(26,26,26,255));
+    g.fillPath(p);
+
+    const float dotradius = radius * (float)0.4;
+    const float dotradius2 = rw * (float)0.4;
+    g.setColour(juce::Colour::fromRGBA(26,26,26,255));
+    g.fillEllipse(centreX - (dotradius),
+                  centreY - (dotradius),
+                  dotradius2, dotradius2);
+}

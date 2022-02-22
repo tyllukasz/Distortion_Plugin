@@ -22,4 +22,16 @@ private:
 
 };
 
+//==============================================================================
+class myLookAndFeelV2 : public LookAndFeel_V4
+{
+
+public:
+    myLookAndFeelV2();
+
+    void drawRotarySlider(Graphics& g, int x, int y, int width, int height, float sliderPos,
+                          float rotaryStartAngle, float rotaryEndAngle, Slider& slider) override;
+
+};
+
 #endif //DISTORTION_PLUGIN_NEW_SLIDERLOOKANDFEEL_H
