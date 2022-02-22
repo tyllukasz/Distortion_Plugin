@@ -132,8 +132,11 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    auto g = apvts.getRawParameterValue("SHAPE");
-    std::cout << g->load() << std::endl;
+    auto gainIn = (apvts.getRawParameterValue("GAIN_IN"))->load();
+    auto shape = (apvts.getRawParameterValue("SHAPE"))->load();
+    auto gainOut = (apvts.getRawParameterValue("GAIN_OUT"))->load();
+
+    //std::cout << g->load() << std::endl;
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -153,10 +156,20 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
-        bufferForGuiInterface = buffer;
 
         juce::ignoreUnused (channelData);
-        // ..do something to the data...
+        // ...do something to the data...
+
+        bufferForGuiInterface = buffer;
+
+        for(int sample = 0; sample < buffer.getNumSamples(); sample++) {
+            channelData[sample] = juce::Decibels::decibelsToGain(gainOut) *
+                                  arcTangens(juce::Decibels::decibelsToGain(gainIn) * channelData[sample], shape);
+//            channelData[sample] = juce::Decibels::decibelsToGain(gainIn) * channelData[sample];
+        }
+
+
+
     }
 }
 
@@ -201,9 +214,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
 
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN_IN",
                                                                      "Input gain",
-                                                                     1.0f,
-                                                                     5.0f,
-                                                                     1.f));
+                                                                     -32.0f,
+                                                                     24.0f,
+                                                                     0.f));
 
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("SHAPE",
                                                                      "Shape",
@@ -213,9 +226,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::c
 
     parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN_OUT",
                                                                      "Output gain",
-                                                                     1.0f,
-                                                                     5.0f,
-                                                                     1.f));
+                                                                     -32.0f,
+                                                                     24.0f,
+                                                                     0.f));
 
     return {parameters.begin(), parameters.end()};
 }
