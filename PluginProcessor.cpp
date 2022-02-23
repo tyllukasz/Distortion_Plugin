@@ -11,8 +11,7 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ),
-       apvts(*this, nullptr, "Parameters", createParameters()),
-       bufferForGuiInterface(getTotalNumInputChannels(), getSampleRate())
+       apvts(*this, nullptr, "Parameters", createParameters())
 {
 }
 
@@ -136,8 +135,6 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto shape = (apvts.getRawParameterValue("SHAPE"))->load();
     auto gainOut = (apvts.getRawParameterValue("GAIN_OUT"))->load();
 
-    //std::cout << g->load() << std::endl;
-
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -160,12 +157,10 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
         juce::ignoreUnused (channelData);
         // ...do something to the data...
 
-        bufferForGuiInterface = buffer;
-
         for(int sample = 0; sample < buffer.getNumSamples(); sample++) {
+            outputForVisualisation = juce::Decibels::decibelsToGain(gainIn) * channelData[sample];
             channelData[sample] = juce::Decibels::decibelsToGain(gainOut) *
                                   arcTangens(juce::Decibels::decibelsToGain(gainIn) * channelData[sample], shape);
-//            channelData[sample] = juce::Decibels::decibelsToGain(gainIn) * channelData[sample];
         }
 
 

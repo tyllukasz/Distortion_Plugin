@@ -90,15 +90,16 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
     juce::Rectangle<float> currentSample;
     currentSample.setSize(10.f, 10.f);
 
-    auto sample = processorRef.bufferForGuiInterface.getReadPointer(0);
+//    auto sample = processorRef.bufferForGuiInterface.getReadPointer(0);
+    auto sample = processorRef.outputForVisualisation;
 
-    auto actualXofCircle = juce::jmap(sample[0],
+    auto actualXofCircle = juce::jmap(sample,
                                    0.f, maxInputAmplitudeValue,
                                    getLocalBounds().toFloat().getCentreX(),
                                    getLocalBounds().toFloat().getWidth());
 
 
-   auto actualYofCircle = juce::jmap(arcTangens(sample[0], gain_value),
+   auto actualYofCircle = juce::jmap(arcTangens(sample, gain_value),
                                    0.f, maxOutputAmplitudeValue,
                                    getLocalBounds().toFloat().getCentreY(), 0.f);
 
