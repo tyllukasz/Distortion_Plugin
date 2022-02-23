@@ -21,6 +21,9 @@ transferFunctionDisplay::~transferFunctionDisplay() noexcept {
 void transferFunctionDisplay::paint(juce::Graphics &g) {
 
     juce::Path transferFunctionCurve;
+    int curveResolution {256};
+    float maxInputAmplitudeValue {2.0f};
+    float maxOutputAmplitudeValue {1.1f};
 
     g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
 
@@ -33,14 +36,44 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
     g.drawHorizontalLine(getRenderArea().getCentreY(), 0.f,
                          getWidth());
 
+    auto xEqualsOne = juce::jmap(1.f,
+               -maxInputAmplitudeValue, maxInputAmplitudeValue,
+               0.f,
+               getLocalBounds().toFloat().getWidth());
+
+    auto yEqualsOne = juce::jmap(1.f,
+               -maxOutputAmplitudeValue, maxOutputAmplitudeValue,
+               getLocalBounds().toFloat().getHeight(), 0.f);
+
+    auto xEqualsMinusOne = juce::jmap(-1.f,
+                                 -maxInputAmplitudeValue, maxInputAmplitudeValue,
+                                 0.f,
+                                 getLocalBounds().toFloat().getWidth());
+
+    auto yEqualsMinusOne = juce::jmap(-1.f,
+                                 -maxOutputAmplitudeValue, maxOutputAmplitudeValue,
+                                 getLocalBounds().toFloat().getHeight(), 0.f);
+
+    //g.setColour(juce::Colours::white);
+    g.drawVerticalLine(xEqualsOne, 0.f,
+                       getHeight());
+
+    g.drawHorizontalLine(yEqualsOne, 0.f,
+                         getWidth());
+
+    g.drawVerticalLine(xEqualsMinusOne, 0.f,
+                       getHeight());
+
+    g.drawHorizontalLine(yEqualsMinusOne, 0.f,
+                         getWidth());
+
+
     auto gain = processorRef.apvts.getRawParameterValue("SHAPE");
     auto gain_value = gain->load();
 
     //==================================================================================================================
     //==================================================================================================================
-    int curveResolution {256};
-    float maxInputAmplitudeValue {1.5f};
-    float maxOutputAmplitudeValue {1.0f};
+
 
     std::vector<float> xRealValues(curveResolution); // x values normalized from -maxInputAmplitude to maxInputAmplitude
     for(int i = 0; i < curveResolution; i++) {
