@@ -56,7 +56,13 @@ private:
 
 class buttonsControlPanel : public juce::Component {
 public:
+    buttonsControlPanel();
     void paint(juce::Graphics& g) override;
+    void resized() override;
+
+private:
+    juce::TextButton arcTanShape;
+    juce::TextButton hardClipShape;
 };
 
 #endif //DISTORTION_PLUGIN_NEW_GUICOMPONENTS_H

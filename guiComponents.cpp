@@ -23,7 +23,7 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
     juce::Path transferFunctionCurve;
     int curveResolution {256};
     float maxInputAmplitudeValue {2.0f};
-    float maxOutputAmplitudeValue {1.1f};
+    float maxOutputAmplitudeValue {1.3f};
 
     g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
 
@@ -84,7 +84,10 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
 
     std::vector<float> yRealValues(xRealValues.size()); // y values normalized from 0 to maxOutputAmplitude
     for(int i = 0; i < yRealValues.size(); i++) {
-        yRealValues.at(i) = arcTangens(xRealValues.at(i), gain_value);
+        //===============================================================
+        //auto functionResult = arcTangens(xRealValues.at(i), gain_value);
+        auto functionResult = hardClip(xRealValues.at(i), gain_value);
+        yRealValues.at(i) = functionResult;
     }
     //==================================================================================================================
     //==================================================================================================================
@@ -131,8 +134,10 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
                                    getLocalBounds().toFloat().getCentreX(),
                                    getLocalBounds().toFloat().getWidth());
 
-
-   auto actualYofCircle = juce::jmap(arcTangens(sample, gain_value),
+    //===============================================================
+    //auto temp = arcTangens(sample, gain_value);
+    auto temp = hardClip(sample, gain_value);
+   auto actualYofCircle = juce::jmap(temp,
                                    0.f, maxOutputAmplitudeValue,
                                    getLocalBounds().toFloat().getCentreY(), 0.f);
 
@@ -234,6 +239,24 @@ void knobsControlPanel::resized() {
 
 }
 
+buttonsControlPanel::buttonsControlPanel() {
+    addAndMakeVisible(arcTanShape);
+    arcTanShape.setClickingTogglesState(true);
+    arcTanShape.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour::fromRGBA(123,123,123,255));
+    arcTanShape.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGBA(60,60,60,255));
+    arcTanShape.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
+    arcTanShape.setColour(juce::TextButton::textColourOnId, juce::Colours::white);
+    arcTanShape.setButtonText("Arcus tangens");
+
+    addAndMakeVisible(hardClipShape);
+    hardClipShape.setClickingTogglesState(true);
+    hardClipShape.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour::fromRGBA(123,123,123,255));
+    hardClipShape.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGBA(60,60,60,255));
+    hardClipShape.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
+    hardClipShape.setColour(juce::TextButton::textColourOnId, juce::Colours::white);
+    hardClipShape.setButtonText("Hard clip");
+}
+
 void buttonsControlPanel::paint(juce::Graphics& g) {
 
     g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
@@ -242,3 +265,23 @@ void buttonsControlPanel::paint(juce::Graphics& g) {
     g.drawRoundedRectangle(1.5f, 1.5f, getWidth()-3.f, getHeight()-3.f, 7.f, 1.f);
 
 };
+
+void buttonsControlPanel::resized() {
+
+    int margin = 5;
+
+    auto arcTanBounds = getLocalBounds();
+    arcTanBounds.removeFromRight(getLocalBounds().getWidth()/2 + margin/2);
+    arcTanBounds.removeFromLeft(margin);
+    arcTanBounds.removeFromTop(margin);
+    arcTanBounds.removeFromBottom(margin);
+    arcTanShape.setBounds(arcTanBounds);
+
+    auto hardClipBounds = getLocalBounds();
+    hardClipBounds.removeFromLeft(getLocalBounds().getWidth()/2 + margin/2);
+    hardClipBounds.removeFromRight(margin);
+    hardClipBounds.removeFromTop(margin);
+    hardClipBounds.removeFromBottom(margin);
+    hardClipShape.setBounds(hardClipBounds);
+
+}
