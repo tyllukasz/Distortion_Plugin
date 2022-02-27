@@ -85,9 +85,16 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
     std::vector<float> yRealValues(xRealValues.size()); // y values normalized from 0 to maxOutputAmplitude
     for(int i = 0; i < yRealValues.size(); i++) {
         //===============================================================
-        //auto functionResult = arcTangens(xRealValues.at(i), gain_value);
-        auto functionResult = hardClip(xRealValues.at(i), gain_value);
-        yRealValues.at(i) = functionResult;
+        auto isArcTanButtonPressed = processorRef.apvts.getRawParameterValue("ATAN_SHAPE")->load();
+        if(isArcTanButtonPressed > 0.5f) {
+            auto functionResult = arcTangens(xRealValues.at(i), gain_value);
+            yRealValues.at(i) = functionResult;
+        }
+        else {
+            auto functionResult = hardClip(xRealValues.at(i), gain_value);
+            yRealValues.at(i) = functionResult;
+        }
+
     }
     //==================================================================================================================
     //==================================================================================================================
@@ -135,8 +142,18 @@ void transferFunctionDisplay::paint(juce::Graphics &g) {
                                    getLocalBounds().toFloat().getWidth());
 
     //===============================================================
-    //auto temp = arcTangens(sample, gain_value);
-    auto temp = hardClip(sample, gain_value);
+
+    auto isArcTanButtonPressed = processorRef.apvts.getRawParameterValue("ATAN_SHAPE")->load();
+    float temp {0.f};
+
+    if(isArcTanButtonPressed > 0.5f) {
+        temp = arcTangens(sample, gain_value);
+    }
+    else {
+        temp = hardClip(sample, gain_value);
+    }
+
+
    auto actualYofCircle = juce::jmap(temp,
                                    0.f, maxOutputAmplitudeValue,
                                    getLocalBounds().toFloat().getCentreY(), 0.f);
@@ -239,22 +256,30 @@ void knobsControlPanel::resized() {
 
 }
 
-buttonsControlPanel::buttonsControlPanel() {
-    addAndMakeVisible(arcTanShape);
-    arcTanShape.setClickingTogglesState(true);
-    arcTanShape.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour::fromRGBA(123,123,123,255));
-    arcTanShape.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGBA(60,60,60,255));
-    arcTanShape.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
-    arcTanShape.setColour(juce::TextButton::textColourOnId, juce::Colours::white);
-    arcTanShape.setButtonText("Arcus tangens");
+buttonsControlPanel::buttonsControlPanel(AudioPluginAudioProcessor& p) : processorRef(p) {
+    addAndMakeVisible(arcTanShapeButton);
+    arcTanShapeButton.setRadioGroupId(RadioButtonsIds::ShapeTransferButtons);
+    arcTanShapeButton.setClickingTogglesState(true);
+    arcTanShapeButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour::fromRGBA(123, 123, 123, 255));
+    arcTanShapeButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGBA(60, 60, 60, 255));
+    arcTanShapeButton.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
+    arcTanShapeButton.setColour(juce::TextButton::textColourOnId, juce::Colours::white);
+    arcTanShapeButton.setButtonText("Arcus tangens");
+    arcTanShapeButton.setToggleState(true, false);
 
-    addAndMakeVisible(hardClipShape);
-    hardClipShape.setClickingTogglesState(true);
-    hardClipShape.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour::fromRGBA(123,123,123,255));
-    hardClipShape.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGBA(60,60,60,255));
-    hardClipShape.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
-    hardClipShape.setColour(juce::TextButton::textColourOnId, juce::Colours::white);
-    hardClipShape.setButtonText("Hard clip");
+    arcTanShapeButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(processorRef.apvts, "ATAN_SHAPE", arcTanShapeButton);
+
+
+    addAndMakeVisible(hardClipShapeButton);
+    hardClipShapeButton.setRadioGroupId(RadioButtonsIds::ShapeTransferButtons);
+    hardClipShapeButton.setClickingTogglesState(true);
+    hardClipShapeButton.setColour(juce::TextButton::ColourIds::buttonColourId, juce::Colour::fromRGBA(123, 123, 123, 255));
+    hardClipShapeButton.setColour(juce::TextButton::ColourIds::buttonOnColourId, juce::Colour::fromRGBA(60, 60, 60, 255));
+    hardClipShapeButton.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
+    hardClipShapeButton.setColour(juce::TextButton::textColourOnId, juce::Colours::white);
+    hardClipShapeButton.setButtonText("Hard clip");
+
+    hardClipShapeButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(processorRef.apvts, "HARD_CLIP_SHAPE", hardClipShapeButton);
 }
 
 void buttonsControlPanel::paint(juce::Graphics& g) {
@@ -275,13 +300,13 @@ void buttonsControlPanel::resized() {
     arcTanBounds.removeFromLeft(margin);
     arcTanBounds.removeFromTop(margin);
     arcTanBounds.removeFromBottom(margin);
-    arcTanShape.setBounds(arcTanBounds);
+    arcTanShapeButton.setBounds(arcTanBounds);
 
     auto hardClipBounds = getLocalBounds();
     hardClipBounds.removeFromLeft(getLocalBounds().getWidth()/2 + margin/2);
     hardClipBounds.removeFromRight(margin);
     hardClipBounds.removeFromTop(margin);
     hardClipBounds.removeFromBottom(margin);
-    hardClipShape.setBounds(hardClipBounds);
+    hardClipShapeButton.setBounds(hardClipBounds);
 
 }

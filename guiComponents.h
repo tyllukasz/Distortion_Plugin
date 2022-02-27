@@ -56,13 +56,22 @@ private:
 
 class buttonsControlPanel : public juce::Component {
 public:
-    buttonsControlPanel();
+    buttonsControlPanel(AudioPluginAudioProcessor& p);
     void paint(juce::Graphics& g) override;
     void resized() override;
 
 private:
-    juce::TextButton arcTanShape;
-    juce::TextButton hardClipShape;
+    AudioPluginAudioProcessor& processorRef;
+
+    juce::TextButton arcTanShapeButton;
+    juce::TextButton hardClipShapeButton;
+
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> arcTanShapeButtonAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> hardClipShapeButtonAttachment;
+};
+
+enum RadioButtonsIds {
+    ShapeTransferButtons = 1001
 };
 
 #endif //DISTORTION_PLUGIN_NEW_GUICOMPONENTS_H

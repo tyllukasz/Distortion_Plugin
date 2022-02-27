@@ -159,12 +159,19 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
         for(int sample = 0; sample < buffer.getNumSamples(); sample++) {
             outputForVisualisation = juce::Decibels::decibelsToGain(gainIn) * channelData[sample];
-            channelData[sample] = juce::Decibels::decibelsToGain(gainOut) *
-                                  arcTangens(juce::Decibels::decibelsToGain(gainIn) * channelData[sample], shape);
+
+            auto pressedArcTanButton = (apvts.getRawParameterValue("ATAN_SHAPE"))->load();
+            auto pressedHardClipButton = (apvts.getRawParameterValue("HARD_CLIP_SHAPE"))->load();
+
+            if(pressedArcTanButton > 0.5f) {
+                channelData[sample] = juce::Decibels::decibelsToGain(gainOut) *
+                                      arcTangens(juce::Decibels::decibelsToGain(gainIn) * channelData[sample], shape);
+            }
+            else if(pressedHardClipButton > 0.5f) {
+                channelData[sample] = juce::Decibels::decibelsToGain(gainOut) *
+                                      hardClip(juce::Decibels::decibelsToGain(gainIn) * channelData[sample], shape);
+            }
         }
-
-
-
     }
 }
 
@@ -205,25 +212,33 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 
 juce::AudioProcessorValueTreeState::ParameterLayout AudioPluginAudioProcessor::createParameters() {
 
-    std::vector<std::unique_ptr<juce::RangedAudioParameter>> parameters;
+    juce::AudioProcessorValueTreeState::ParameterLayout parameters;
 
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN_IN",
+    parameters.add(std::make_unique<juce::AudioParameterFloat>("GAIN_IN",
                                                                      "Input gain",
                                                                      -32.0f,
                                                                      24.0f,
                                                                      0.f));
 
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("SHAPE",
+    parameters.add(std::make_unique<juce::AudioParameterFloat>("SHAPE",
                                                                      "Shape",
                                                                      1.0f,
                                                                      5.0f,
                                                                      1.f));
 
-    parameters.push_back(std::make_unique<juce::AudioParameterFloat>("GAIN_OUT",
+    parameters.add(std::make_unique<juce::AudioParameterFloat>("GAIN_OUT",
                                                                      "Output gain",
                                                                      -32.0f,
                                                                      24.0f,
                                                                      0.f));
 
-    return {parameters.begin(), parameters.end()};
+    parameters.add(std::make_unique<juce::AudioParameterBool>("ATAN_SHAPE",
+                                                              "Atan shape",
+                                                              true));
+
+    parameters.add(std::make_unique<juce::AudioParameterBool>("HARD_CLIP_SHAPE",
+                                                              "Hard clip shape",
+                                                              false));
+
+    return parameters;
 }

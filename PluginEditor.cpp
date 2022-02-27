@@ -3,7 +3,7 @@
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
-    : AudioProcessorEditor (&p), processorRef (p), kcp(p), tfd(p)
+    : AudioProcessorEditor (&p), processorRef (p), kcp(p), tfd(p), bcp(p)
 {
     juce::ignoreUnused (processorRef);
 
