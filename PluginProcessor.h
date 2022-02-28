@@ -45,6 +45,8 @@ public:
 
     juce::AudioProcessorValueTreeState apvts;
     float outputForVisualisation;
+    float pressedArcTanButton {0.f};
+    float pressedHardClipButton {0.f};
 
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();

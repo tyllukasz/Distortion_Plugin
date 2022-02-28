@@ -135,6 +135,9 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto shape = (apvts.getRawParameterValue("SHAPE"))->load();
     auto gainOut = (apvts.getRawParameterValue("GAIN_OUT"))->load();
 
+    pressedArcTanButton = (apvts.getRawParameterValue("ATAN_SHAPE"))->load();
+    pressedHardClipButton = (apvts.getRawParameterValue("HARD_CLIP_SHAPE"))->load();
+
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
@@ -159,9 +162,6 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
         for(int sample = 0; sample < buffer.getNumSamples(); sample++) {
             outputForVisualisation = juce::Decibels::decibelsToGain(gainIn) * channelData[sample];
-
-            auto pressedArcTanButton = (apvts.getRawParameterValue("ATAN_SHAPE"))->load();
-            auto pressedHardClipButton = (apvts.getRawParameterValue("HARD_CLIP_SHAPE"))->load();
 
             if(pressedArcTanButton > 0.5f) {
                 channelData[sample] = juce::Decibels::decibelsToGain(gainOut) *
