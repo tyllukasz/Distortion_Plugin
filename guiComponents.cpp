@@ -188,7 +188,7 @@ juce::Rectangle<float> transferFunctionDisplay::getRenderArea() {
     return renderArea;
 }
 
-knobsControlPanel::knobsControlPanel(AudioPluginAudioProcessor& p) : processorRef(p) {
+KnobsControlPanel::KnobsControlPanel(AudioPluginAudioProcessor& p) : processorRef(p) {
 
     //============================================================================================================
     addAndMakeVisible(gainInKnobSlider);
@@ -240,7 +240,7 @@ knobsControlPanel::knobsControlPanel(AudioPluginAudioProcessor& p) : processorRe
     addAndMakeVisible(gainOutLabel);
 }
 
-void knobsControlPanel::paint(juce::Graphics& g) {
+void KnobsControlPanel::paint(juce::Graphics& g) {
     g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
 
     g.setColour(juce::Colour::fromRGBA(93,93,93,255));
@@ -248,7 +248,7 @@ void knobsControlPanel::paint(juce::Graphics& g) {
 
 };
 
-void knobsControlPanel::resized() {
+void KnobsControlPanel::resized() {
 
     gainInKnobSlider.setBounds(0, 25, getWidth()/3, getHeight()-30);
     shapeKnobSlider.setBounds(getWidth()/3, 25, getWidth()/3, getHeight()-30);
@@ -256,7 +256,7 @@ void knobsControlPanel::resized() {
 
 }
 
-buttonsControlPanel::buttonsControlPanel(AudioPluginAudioProcessor& p) : processorRef(p) {
+ButtonsControlPanel::ButtonsControlPanel(AudioPluginAudioProcessor& p) : processorRef(p) {
     addAndMakeVisible(arcTanShapeButton);
     arcTanShapeButton.setRadioGroupId(RadioButtonsIds::ShapeTransferButtons);
     arcTanShapeButton.setClickingTogglesState(true);
@@ -266,6 +266,7 @@ buttonsControlPanel::buttonsControlPanel(AudioPluginAudioProcessor& p) : process
     arcTanShapeButton.setColour(juce::TextButton::textColourOnId, juce::Colours::white);
     arcTanShapeButton.setButtonText("Arcus tangens");
     arcTanShapeButton.setToggleState(true, false);
+
 
     arcTanShapeButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(processorRef.apvts, "ATAN_SHAPE", arcTanShapeButton);
 
@@ -282,7 +283,7 @@ buttonsControlPanel::buttonsControlPanel(AudioPluginAudioProcessor& p) : process
     hardClipShapeButtonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(processorRef.apvts, "HARD_CLIP_SHAPE", hardClipShapeButton);
 }
 
-void buttonsControlPanel::paint(juce::Graphics& g) {
+void ButtonsControlPanel::paint(juce::Graphics& g) {
 
     g.fillAll(juce::Colour::fromRGBA(143,143,143,255));
 
@@ -291,7 +292,7 @@ void buttonsControlPanel::paint(juce::Graphics& g) {
 
 };
 
-void buttonsControlPanel::resized() {
+void ButtonsControlPanel::resized() {
 
     int margin = 5;
 
@@ -308,5 +309,68 @@ void buttonsControlPanel::resized() {
     hardClipBounds.removeFromTop(margin);
     hardClipBounds.removeFromBottom(margin);
     hardClipShapeButton.setBounds(hardClipBounds);
+}
 
+void CustomTextButton::paint(juce::Graphics &g) {
+
+    g.setColour(juce::Colour::fromRGBA(123, 123, 123, 255));
+    g.fillRoundedRectangle(0.f, 0.f, getLocalBounds().toFloat().getWidth(), getLocalBounds().toFloat().getHeight(), 5.f);
+
+    juce::Path transferFunctionCurve;
+    int curveResolution {256};
+    float maxInputAmplitudeValue {2.0f};
+    float maxOutputAmplitudeValue {1.3f};
+
+    std::vector<float> xRealValues(curveResolution);
+    for(int i = 0; i < curveResolution; i++) {
+        xRealValues.at(i) = juce::jmap(static_cast<float>(i),
+                                       0.f, static_cast<float>(curveResolution - 1),
+                                       -maxInputAmplitudeValue, maxInputAmplitudeValue);
+    }
+
+    std::vector<float> yRealValues(xRealValues.size()); // y values normalized from 0 to maxOutputAmplitude
+    for(int i = 0; i < yRealValues.size(); i++) {
+        //===============================================================
+
+        if(1.f > 0.5f) { // tbc
+            auto functionResult = arcTangens(xRealValues.at(i), 5.f);
+            yRealValues.at(i) = functionResult;
+        }
+        else {
+            auto functionResult = hardClip(xRealValues.at(i), 1.f);
+            yRealValues.at(i) = functionResult;
+        }
+
+    }
+    //==================================================================================================================
+    //==================================================================================================================
+
+    std::vector<float> xCoordinate(curveResolution);
+    std::vector<float> yCoordinate(curveResolution);
+
+    xCoordinate.at(0) = 0.f;
+    yCoordinate.at(0) = juce::jmap(yRealValues.at(0),
+                                   -maxOutputAmplitudeValue, maxOutputAmplitudeValue,
+                                   getLocalBounds().toFloat().getHeight(), 0.f);
+    transferFunctionCurve.startNewSubPath(xCoordinate.at(0), yCoordinate.at(0));
+
+    for(int i = 1; i < curveResolution; i++) {
+
+        xCoordinate.at(i) = juce::jmap(xRealValues.at(i),
+                                       -maxInputAmplitudeValue, maxInputAmplitudeValue,
+                                       0.f,
+                                       getLocalBounds().toFloat().getWidth());
+
+
+        yCoordinate.at(i) = juce::jmap(yRealValues.at(i),
+                                       -maxOutputAmplitudeValue, maxOutputAmplitudeValue,
+                                       getLocalBounds().toFloat().getHeight(), 0.f);
+    }
+
+    for(int i = 1; i < curveResolution; i++) {
+        transferFunctionCurve.lineTo(xCoordinate.at(i), yCoordinate.at(i));
+    }
+
+    g.setColour(juce::Colour::fromRGBA(147,211,241,255));
+    g.strokePath(transferFunctionCurve, juce::PathStrokeType(3.f));
 }

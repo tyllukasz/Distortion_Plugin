@@ -27,9 +27,9 @@ private:
 
 };
 
-class knobsControlPanel : public Component {
+class KnobsControlPanel : public Component {
 public:
-    knobsControlPanel(AudioPluginAudioProcessor& p);
+    KnobsControlPanel(AudioPluginAudioProcessor& p);
     void paint(juce::Graphics& g) override;
     void resized() override;
 
@@ -54,9 +54,15 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainOutKnobSliderAttachment;
 };
 
-class buttonsControlPanel : public juce::Component {
+class CustomTextButton : public juce::TextButton {
 public:
-    buttonsControlPanel(AudioPluginAudioProcessor& p);
+    void paint(juce::Graphics& g) override;
+
+};
+
+class ButtonsControlPanel : public juce::Component {
+public:
+    ButtonsControlPanel(AudioPluginAudioProcessor& p);
     void paint(juce::Graphics& g) override;
     void resized() override;
 
@@ -64,6 +70,7 @@ private:
     AudioPluginAudioProcessor& processorRef;
 
     juce::TextButton arcTanShapeButton;
+//    CustomTextButton arcTanShapeButton;
     juce::TextButton hardClipShapeButton;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> arcTanShapeButtonAttachment;

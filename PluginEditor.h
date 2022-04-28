@@ -27,8 +27,8 @@ private:
     // =========================================================
     // Layout definition
     transferFunctionDisplay tfd;
-    knobsControlPanel kcp;
-    buttonsControlPanel bcp;
+    KnobsControlPanel kcp;
+    ButtonsControlPanel bcp;
     // =========================================================
 
 //    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainInKnobSliderAttachment;
